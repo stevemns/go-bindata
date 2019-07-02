@@ -5,8 +5,8 @@ check: errcheck vet golint $(FILES:.go=.checked)
 
 out/%.checked: out/%.go
 	errcheck $<
-	go tool vet --all $<
-	go tool vet --shadow $<
+	go vet --all $<
+	go vet -vettool=`which shadow` $<
 	golint $<
 
 $(GOPATH)/bin/go-bindata: $(wildcard ../*.go) $(wildcard ../**/*.go)
@@ -31,7 +31,9 @@ errcheck:
 	go get github.com/kisielk/errcheck
 
 vet:
-	go get golang.org/x/tools/cmd/vet
+	@echo "[DISABLED] go get golang.org/x/tools/cmd/vet"
+	go install golang.org/x/tools/go/analysis/passes/shadow/cmd/shadow
 
 golint:
-	go get github.com/golang/lint/golint
+	@echo "[DISABLED] go get github.com/golang/lint/golint"
+	go get -u golang.org/x/lint/golint
